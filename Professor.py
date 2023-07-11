@@ -1,7 +1,7 @@
-class Professor: # Verify if email is correct
+class Professor: 
     profsAccounts = {}
 
-    def __init__(self, username, password, email, fullName):
+    def __init__(self, username, password, email = "None", fullName = "None"):
         self.__username = username
         self.__password = password
         self.__email = email
