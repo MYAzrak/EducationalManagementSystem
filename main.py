@@ -120,7 +120,7 @@ def loginAccount(userRole, incorrectPasswordsLimit=3):
             if password == Prof.Professor.profsAccounts.get(
                 username
             ):  # Correct password
-                Prof.Professor.profMenu()
+                profUser = Prof.Professor.profMenu()
             else:  # Incorrect password
                 print(
                     f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
@@ -212,4 +212,5 @@ def main():
         sys.exit(0)
 
 
+# Starting point
 main()

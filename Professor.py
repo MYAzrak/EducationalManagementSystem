@@ -16,11 +16,11 @@ class Professor:
         """
         pass
 
-    def __init__(self, username, password, email="None", fullName="None"):
+    def __init__(self, username, password, fullName, email="None"):
         self.__username = username
         self.__password = password
-        self.__email = email
         self.__fullName = fullName
+        self.__email = email
         Professor.profsAccounts.update({f"{username}": f"{password}"})
         print(f"Welcome {self.__username}!\n")
 
