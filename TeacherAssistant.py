@@ -14,4 +14,3 @@ class TeacherAssistant:
         TeacherAssistant.TAsAccounts.update({f"{username}": f"{password}"})
         print(f"Welcome {self.__username}!\n")
 
-    
