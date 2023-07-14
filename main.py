@@ -51,7 +51,8 @@ def registerAccount(userRole):
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Prof.Professor(username, password)
+            Prof.Professor.profsAccounts.update({f"{username}": f"{password}"})
+            print(f"Welcome {username}!\n")
             main()
 
     # Student registration
@@ -60,7 +61,8 @@ def registerAccount(userRole):
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Stu.Student(username, password)
+            Stu.Student.stusAccounts.update({f"{username}": f"{password}"})
+            print(f"Welcome {username}!\n")
             main()
 
     # Teacher Assistant registration
@@ -69,7 +71,8 @@ def registerAccount(userRole):
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            TA.TeacherAssistant(username, password)
+            TA.TeacherAssistant.TAsAccounts.update({f"{username}": f"{password}"})
+            print(f"Welcome {username}!\n")
             main()
 
 
@@ -105,9 +108,10 @@ def loginAccount(userRole, incorrectPasswordsLimit=3):
     Used in the loginOption function.
     Login accounts for all roles.
     """
-    # 5 Invalid passwords attempts
+    # 3 Invalid passwords attempts
     if incorrectPasswordsLimit == 0:
         sys.exit(1)
+
     # Input username & password without validation
     username, password = enterDetails()
 
@@ -120,7 +124,8 @@ def loginAccount(userRole, incorrectPasswordsLimit=3):
             if password == Prof.Professor.profsAccounts.get(
                 username
             ):  # Correct password
-                profUser = Prof.Professor.profMenu()
+                profUser = Prof.Professor(username, password)
+                profUser.profMenu()
             else:  # Incorrect password
                 print(
                     f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
@@ -134,9 +139,9 @@ def loginAccount(userRole, incorrectPasswordsLimit=3):
             loginAccount("S")
         else:
             if password == Stu.Student.stusAccounts.get(username):  # Correct password
-                Stu.Student.stuMenu()
+                stuUser = Stu.Student(username, password)
+                stuUser.stuMenu()
             else:  # Incorrect password
-                incorrectPasswordsLimit -= 1
                 print(
                     f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
                 )
@@ -153,9 +158,9 @@ def loginAccount(userRole, incorrectPasswordsLimit=3):
             if password == TA.TeacherAssistant.TAsAccounts.get(
                 username
             ):  # Correct password
-                TA.TeacherAssistant.TAMenu()
+                TAUser = TA.TeacherAssistant(username, password)
+                TAUser.TAMenu()
             else:  # Incorrect password
-                incorrectPasswordsLimit -= 1
                 print(
                     f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
                 )
