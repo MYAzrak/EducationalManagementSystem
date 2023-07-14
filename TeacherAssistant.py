@@ -1,8 +1,5 @@
-from main import main
-
-
 class TeacherAssistant:
-    TAsAccounts = {}
+    TAsAccounts = {}  # {'username': password}
 
     def __init__(self, username, password, fullName="None", email="None"):
         self.__username = username
@@ -13,7 +10,7 @@ class TeacherAssistant:
     def TAMenu(self):
         # Teacher Assistant menu
         temp = input("Welcome to the Teacher Assistants menu!\n")
-        
+
         option = input("Please make your choice:\n1. Log out").strip()
 
         # Wrong Input
@@ -23,4 +20,3 @@ class TeacherAssistant:
         # Back to main menu
         if option == "1":
             del self
-            main()

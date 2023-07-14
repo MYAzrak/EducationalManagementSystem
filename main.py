@@ -1,9 +1,9 @@
 # Modules imported
 import sys
-import Professor as Prof
-import Student as Stu
-import TeacherAssistant as TA
 import re
+from Professor import Professor
+from Student import Student
+from TeacherAssistant import TeacherAssistant
 
 
 # Functions defined
@@ -47,31 +47,31 @@ def registerAccount(userRole):
 
     # Professor registration
     if userRole == "P":
-        if username in Prof.Professor.profsAccounts.keys():
+        if username in Professor.profsAccounts.keys():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Prof.Professor.profsAccounts.update({f"{username}": f"{password}"})
+            Professor.profsAccounts.update({f"{username}": f"{password}"})
             print(f"Welcome {username}!\n")
             main()
 
     # Student registration
     elif userRole == "S":
-        if username in Stu.Student.stusAccounts.keys():
+        if username in Student.stusAccounts.keys():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Stu.Student.stusAccounts.update({f"{username}": f"{password}"})
+            Student.stusAccounts.update({f"{username}": f"{password}"})
             print(f"Welcome {username}!\n")
             main()
 
     # Teacher Assistant registration
     elif userRole == "T":
-        if username in TA.TeacherAssistant.TAsAccounts.keys():
+        if username in TeacherAssistant.TAsAccounts.keys():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            TA.TeacherAssistant.TAsAccounts.update({f"{username}": f"{password}"})
+            TeacherAssistant.TAsAccounts.update({f"{username}": f"{password}"})
             print(f"Welcome {username}!\n")
             main()
 
@@ -117,15 +117,14 @@ def loginAccount(userRole, incorrectPasswordsLimit=3):
 
     # Professor login
     if userRole == "P":
-        if username not in Prof.Professor.profsAccounts.keys():  # Unavailable username
+        if username not in Professor.profsAccounts.keys():  # Unavailable username
             print("This username does not exist.\n")
             loginAccount("P")
         else:
-            if password == Prof.Professor.profsAccounts.get(
-                username
-            ):  # Correct password
-                profUser = Prof.Professor(username, password)
+            if password == Professor.profsAccounts.get(username):  # Correct password
+                profUser = Professor(username, password)
                 profUser.profMenu()
+                main()
             else:  # Incorrect password
                 print(
                     f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
@@ -134,13 +133,14 @@ def loginAccount(userRole, incorrectPasswordsLimit=3):
 
     # Student login
     if userRole == "S":
-        if username not in Stu.Student.stusAccounts.keys():  # Unavailable username
+        if username not in Student.stusAccounts.keys():  # Unavailable username
             print("This username does not exist.\n")
             loginAccount("S")
         else:
-            if password == Stu.Student.stusAccounts.get(username):  # Correct password
-                stuUser = Stu.Student(username, password)
+            if password == Student.stusAccounts.get(username):  # Correct password
+                stuUser = Student(username, password)
                 stuUser.stuMenu()
+                main()
             else:  # Incorrect password
                 print(
                     f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
@@ -149,17 +149,16 @@ def loginAccount(userRole, incorrectPasswordsLimit=3):
 
     # Teacher Assistant login
     elif userRole == "T":
-        if (
-            username not in TA.TeacherAssistant.TAsAccounts.keys()
-        ):  # Unavailable username
+        if username not in TeacherAssistant.TAsAccounts.keys():  # Unavailable username
             print("This username does not exist.\n")
             loginAccount("T")
         else:
-            if password == TA.TeacherAssistant.TAsAccounts.get(
+            if password == TeacherAssistant.TAsAccounts.get(
                 username
             ):  # Correct password
-                TAUser = TA.TeacherAssistant(username, password)
+                TAUser = TeacherAssistant(username, password)
                 TAUser.TAMenu()
+                main()
             else:  # Incorrect password
                 print(
                     f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"

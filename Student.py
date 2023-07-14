@@ -1,25 +1,57 @@
-from main import main
+from Course import Course
 
 
 class Student:
-    stusAccounts = {}
+    stusAccounts = {"mya": "1"}  # {'username': 'password'}
 
-    def __init__(
-        self, username, password, fullName="None", email="None", registeredCourses=[]
-    ):
+    def __init__(self, username, password, fullName="None", email="None"):
         self.__username = username
         self.__password = password
         self.__fullName = fullName
         self.__email = email
-        self.__registeredCourses = registeredCourses
+        self.__registeredCourses = []
+        for courseName in Course.registeredStudents.keys():
+            if self.__username in Course.registeredStudents.get(courseName):
+                self.__registeredCourses.append(courseName)
 
-    # Register in a course (Gives a list of non-registered courses)
     def registerInCourse(self):
-        pass
+        """
+        Gives a list of all courses for students
+        to register from.
+        """
+        print("\nAvailable courses:")
+        for key in Course.allCourses.keys():
+            print(key)
 
-    # List my courses
+        courseName = input(
+            "\nPlease enter the name of the course that you want to register in: (Type 'B' to go back)\n"
+        )
+
+        if courseName == "B" or courseName == "b":
+            self.stuMenu()
+
+        while (  # 1st condition: Unavailable course 2nd: Student already registered
+            courseName not in Course.allCourses.keys()
+            or courseName in self.__registeredCourses
+        ):
+            courseName = input(
+                "\nCourse unavailable or you are already registered in that course. Please write again: (Type 'B' to go back)\n"
+            )
+            if courseName == "B" or courseName == "b":
+                self.stuMenu()
+
+        self.__registeredCourses.append(courseName)
+        Course.registeredStudents[courseName].extend([self.__username])
+        print("Course registered successfully!")
+        self.stuMenu()
+
     def listAllCourses(self):
-        pass
+        """
+        Lists student's courses with their codes
+        """
+        for course in self.__registeredCourses:
+            print(f"- {course} : {Course.allCourses.get(course)}\n")
+        self.stuMenu()
 
     # View a course (summary of course name, code, list HW report
     # (Which HW did I submit ? , all grades, submit HW solution, unregister from
@@ -35,9 +67,9 @@ class Student:
     def stuMenu(self):
         # Student menu
         temp = input("Welcome to the Students menu!\n")
-        
+
         option = input(
-            "Please make your choice:\n1. Register in a course\n2. List my courses\n3. View a course\n4. Grades report\n5. Log out"
+            "Please make your choice:\n1. Register in a course\n2. List my courses\n3. View a course\n4. Grades report\n5. Log out\n"
         ).strip()
 
         # Wrong Input
@@ -63,4 +95,3 @@ class Student:
         # Back to main menu
         elif option == "5":
             del self
-            main()

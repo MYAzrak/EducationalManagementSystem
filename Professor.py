@@ -1,8 +1,5 @@
-from main import main
-
-
 class Professor:
-    profsAccounts = {}
+    profsAccounts = {}  # {'username': password}
 
     def __init__(self, username, password, fullName="None", email="None"):
         self.__username = username
@@ -40,7 +37,6 @@ class Professor:
         # Back to main menu
         if option == "5":
             del self
-            main()
         """
         List courses
         Create courses
