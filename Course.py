@@ -1,5 +1,9 @@
 class Course:
-    allCourses = {"Prog": "123", "Prog2": "321"}  # {'Course name' : 'Course code'}
+    allCourses = {
+        "Prog": ["Ali", "123"],
+        "Prog2": ["Yaser", "321"],
+    }  # {'Course name' : ['Course professor', 'Course code']}
+
     registeredStudents = {
         "Prog": ["mya"],
         "Prog2": [],
@@ -8,3 +12,4 @@ class Course:
     def __init__(self, name, code):
         self.__name = name
         self.__code = code
+        # add to allCourses and registeredStudents when making a new course by prof
