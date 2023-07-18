@@ -1,107 +1,118 @@
-from Course import Course
-from HomeWork import HomeWork
+from course import Course
+from home_work import HomeWork
 
 
 class Student:
-    stusAccounts = {"mya": "1"}  # {'username': 'password'}
+    stus_accounts = {"mya": "1"}  # {'username': 'password'}
 
-    def __init__(self, username, password, fullName="None", email="None"):
+    @classmethod
+    def get_stus_usernames(cls):
+        return cls.stus_accounts.keys()
+
+    @classmethod
+    def get_stu_password(cls, username):
+        return cls.stus_accounts.get(username)
+
+    @classmethod
+    def update_stus_accounts(cls, username, password):
+        cls.stus_accounts.update({username: password})
+
+    def __init__(self, username, password, full_name="None", email="None"):
         self.__username = username
         self.__password = password
-        self.__fullName = fullName
+        self.__full_name = full_name
         self.__email = email
-        self.__registeredCourses = []
-        for (
-            courseName
-        ) in (
-            Course.registeredStudents.keys()
-        ):  # Fills __registeredCourses[] from the registeredStudents{} from the Course class
-            if self.__username in Course.registeredStudents.get(courseName):
-                self.__registeredCourses.append(courseName)
+        self.__registered_courses = []
+        # Fills __registered_courses[] from the registered_students{} from the Course class
+        for course_name in Course.registered_students.keys():
+            if self.__username in Course.registered_students.get(course_name):
+                self.__registered_courses.append(course_name)
 
-    def registerInCourse(self):
+    def register_in_course(self):
         """
         Gives a list of all courses for students
         to register from.
         """
         print("\nAvailable courses:")
-        for key in Course.allCourses.keys():
-            print(key)
+        for course_name in Course.get_all_courses:
+            print(course_name)
 
-        courseName = input(
+        course_name = input(
             "\nPlease enter the name of the course that you want to register in: (Type 'B' to go back)\n"
         )
 
         # Go back
-        if courseName == "B" or courseName == "b":
-            self.stuMenu()
+        if course_name == "B" or course_name == "b":
+            self.stu_menu()
 
         while (  # 1st condition: Unavailable course 2nd: Student already registered
-            courseName not in Course.allCourses.keys()
-            or courseName in self.__registeredCourses
+            course_name not in Course.courses_details.keys()
+            or course_name in self.__registered_courses
         ):
-            courseName = input(
+            course_name = input(
                 "\nCourse unavailable or you are already registered in that course. Please write again: (Type 'B' to go back)\n"
             )
-            if courseName == "B" or courseName == "b":
-                self.stuMenu()
+            if course_name == "B" or course_name == "b":
+                self.stu_menu()
 
-        self.__registeredCourses.append(courseName)
-        Course.registeredStudents[courseName].extend([self.__username])
+        self.__registered_courses.append(course_name)
+        Course.add_student(self.__username, course_name)
         print("Course registered successfully!")
-        self.stuMenu()
+        self.stu_menu()
 
-    def listMyCourses(self, fromMenu=True):
+    def list_my_courses(self, from_menu=True):
         """
         Lists student's courses with their codes
-        Used in the viewACourse() function
+        Used in the view_course() function
         """
-        if len(self.__registeredCourses) == 0:
+        if len(self.__registered_courses) == 0:
             print("You are not registered in any course")
         else:
             print("My courses list:")
-            for courseNum, course in enumerate(self.__registeredCourses, 1):
-                print(f"{courseNum}- {course} ({Course.allCourses.get(course)[1]})")
+            for course_num, course_name in enumerate(self.__registered_courses, 1):
+                print(
+                    f"{course_num}- {course_name} ({Course.get_course_code(course_name)})"
+                )
 
-        if fromMenu:  # If the function call was from the students menu
-            self.stuMenu()
-        return len(self.__registeredCourses)
+        if from_menu:  # If the function call was from the students' menu
+            self.stu_menu()
+        return len(self.__registered_courses)
 
-    def viewCourseDetails(self, courseNum):
+    def view_course_details(self, course_num):
         """
-        Used in the viewACourse() function
+        Used in the view_course() function
         List a course details such as, course name and code and taught by whom,
         courses assignments and their grades
         """
-        courseName = self.__registeredCourses[int(courseNum) - 1]
-        courseCode = Course.allCourses.get(courseName)[1]
-        courseProfessor = Course.allCourses.get(courseName)[0]
-        print(f"\n{courseName} ({courseCode}) is taught by Prof.{courseProfessor}\n")
+        course_name = self.__registered_courses[int(course_num) - 1]
+        course_code = Course.get_course_code(course_name)
+        course_prof = Course.get_course_prof(course_name)
+        print(f"\n{course_name} ({course_code}) is taught by Prof.{course_prof}\n")
         print("Course assignments: ")
-        for HWNum, grade in enumerate(
-            HomeWork.allStudentsGrades[self.__username][courseName], 1
+        for hw_num, grade in enumerate(
+            HomeWork.allStudentsGrades[self.__username][course_name], 1
         ):
-            print(f"HW #{HWNum} grade: {grade}/50")
+            print(f"HW #{hw_num} grade: {grade}/50")
 
     def deleteCourse(self, courseNum):
         """
         Used in the viewACourse() function
         Deletes a student's course
         """
-        courseName = self.__registeredCourses[int(courseNum) - 1]
+        courseName = self.__registered_courses[int(courseNum) - 1]
         for (
             studentGrades
         ) in Course.allStudentsGrades.values():  # Removes all course's HWs grades
             if courseName in studentGrades:
                 del studentGrades[courseName]
 
-        Course.registeredStudents[courseName] = [
+        Course.registered_students[courseName] = [
             student
-            for student in Course.registeredStudents[courseName]
+            for student in Course.registered_students[courseName]
             if student != self.__username
         ]  # Removes the course from the Course class attribute
 
-        self.__registeredCourses.remove(
+        self.__registered_courses.remove(
             courseName
         )  # Removes the course from the instance attribute
 
@@ -115,24 +126,24 @@ class Student:
     # View a course (summary of course name, code, list HW report
     # (Which HW did I submit ? , all grades, submit HW solution, unregister from
     # course)
-    def viewACourse(self):
+    def view_course(self):
         """
         View a summary of the course (name, code, professor, HWs)
         Delete a course
         View HWs grades
         Submit a solution
         """
-        coursesNum = self.listMyCourses(False)
+        coursesNum = self.list_my_courses(False)
         if coursesNum == 0:
             print("You are not registered in any course")
-            self.stuMenu()
+            self.stu_menu()
         else:
             courseNum = input("Which ith course to view? ")
             optionsList = [str(x) for x in range(1, coursesNum + 1)]
             while courseNum not in optionsList:
                 courseNum = input("Wrong input ")
 
-            self.viewCourseDetails(courseNum)
+            self.view_course_details(courseNum)
 
             option = input(
                 "\nPlease make a choice: \n1- Unregister from the course\n2- Submit a HW\n3- Back\n"
@@ -143,7 +154,7 @@ class Student:
             # Delete a course
             if option == "1":
                 self.deleteCourse(courseNum)
-                self.stuMenu()
+                self.stu_menu()
 
             # Submit a solution
             elif option == "2":
@@ -151,17 +162,21 @@ class Student:
 
             # Go back
             elif option == "3":
-                self.stuMenu()
+                self.stu_menu()
 
     # Grades report(List of courses with # of HWs of each course and the total
     # grades, E.g. Course code CS333 - Total 4 HWs - Grade 101 / 200)
-    def printGradeReport(self):
-        for course, grades in HomeWork.allStudentsGrades.get(self.__username, {}).items():
+    def print_grade_report(self):
+        for course, grades in HomeWork.allStudentsGrades.get(
+            self.__username, {}
+        ).items():
             numOfHWs = len(grades)
             totalGrade = sum(int(grade) for grade in grades if grade.isdigit())
-            print(f"{course} has {numOfHWs} assignments - Total Grade: {totalGrade}/{numOfHWs * 50}")
+            print(
+                f"{course} has {numOfHWs} assignments - Total Grade: {totalGrade}/{numOfHWs * 50}"
+            )
 
-    def stuMenu(self):
+    def stu_menu(self):
         # Student menu
         temp = input("Welcome to the Students menu!\n")
 
@@ -175,20 +190,24 @@ class Student:
 
         # Register in a course
         if option == "1":
-            self.registerInCourse()
+            self.register_in_course()
 
         # List all student's courses
         elif option == "2":
-            self.listMyCourses()
+            self.list_my_courses()
 
         # View a course details
         elif option == "3":
-            self.viewACourse()
+            self.view_course()
 
         # Print student's grade report
         elif option == "4":
-            self.printGradeReport()
+            self.print_grade_report()
 
         # Back to main menu
         elif option == "5":
             del self
+
+
+
+# line 92

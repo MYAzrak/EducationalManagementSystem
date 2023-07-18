@@ -1,5 +1,15 @@
 class TeacherAssistant:
-    TAsAccounts = {}  # {'username': password}
+    tas_accounts = {}  # {'username': password}
+
+    @classmethod
+    def get_tas_usernames(cls):
+        return cls.tas_accounts.keys()
+    @classmethod
+    def get_ta_password(cls, username):
+        return cls.tas_accounts.get(username)
+    @classmethod
+    def update_tas_accounts(cls, username, password):
+        cls.tas_accounts.update({username: password})
 
     def __init__(self, username, password, fullName="None", email="None"):
         self.__username = username
@@ -7,7 +17,7 @@ class TeacherAssistant:
         self.__fullName = fullName
         self.__email = email
 
-    def TAMenu(self):
+    def ta_menu(self):
         # Teacher Assistant menu
         temp = input("Welcome to the Teacher Assistants menu!\n")
 

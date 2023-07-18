@@ -1,31 +1,43 @@
 class Professor:
-    profsAccounts = {}  # {'username': password}
+    profs_accounts = {}  # {'username': password}
 
-    def __init__(self, username, password, fullName="None", email="None"):
+    @classmethod
+    def get_profs_usernames(cls):
+        return cls.profs_accounts.keys()
+
+    @classmethod
+    def get_prof_password(cls, username):
+        return cls.profs_accounts.get(username)
+
+    @classmethod
+    def update_profs_accounts(cls, username, password):
+        cls.profs_accounts.update({username: password})
+
+    def __init__(self, username, password, full_name="None", email="None"):
         self.__username = username
         self.__password = password
-        self.__fullName = fullName
+        self.__full_name = full_name
         self.__email = email
 
-    def createCourse(self, courseName, TAs):
+    def create_course(self, course_name, TAs):
         pass
 
-    def showCourseStats(self, HWName):
+    def show_course_stats(self, hw_name):
         pass
 
-    def createHW(self, HWName):
+    def create_hw(self, hw_name):
         pass
 
-    def viewHW(self, HWName):
+    def view_hw(self, hw_name):
         pass
 
-    def gradeHW(self, HWName):
+    def grade_hw(self, hw_name):
         pass
 
-    def showHWStats(self, HWName):
+    def show_hw_stats(self, hw_name):
         pass
 
-    def profMenu(self):
+    def prof_menu(self):
         temp = input("Welcome to the Professors menu!\n")
 
         option = input("Please make your choice:\n").strip()

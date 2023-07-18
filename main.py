@@ -1,19 +1,19 @@
 # Modules imported
 import sys
 import re
-from Professor import Professor
-from Student import Student
-from TeacherAssistant import TeacherAssistant
+from professor import Professor
+from student import Student
+from teacher_assistant import TeacherAssistant
 
 
 # Functions defined
-def enterDetails():
+def enter_details():
     """
-    Used in the loginOption function.
+    Used in the login_option function.
     For users to input their usernames & passwords.
     """
-    backToMainMenu = input("\nDo you want to go back to the main menu? (Y/N): ").strip()
-    if backToMainMenu == "Y" or backToMainMenu == "y":
+    back_to_main = input("\nDo you want to go back to the main menu? (Y/N): ").strip()
+    if back_to_main == "Y" or back_to_main == "y":
         main()
     else:
         username = input("Please enter your username: ").strip()
@@ -21,24 +21,24 @@ def enterDetails():
         return username, password
 
 
-def isValidUsername(username):
+def is_valid_username(username):
     """
-    Used in the registerAccount function.
+    Used in the register_account function.
     Validates usernames to have English letters, digits, a single dot, underscore, or dash characters only.
     """
     pattern = r"^(?!.*\..*\.)[a-zA-Z0-9_.-]{3,20}$"
     return re.match(pattern, username) is not None
 
 
-def registerAccount(userRole):
+def register_account(user_role):
     """
-    Uses the isValidUsername function.
-    Used in the registerOption function.
+    Uses the is_valid_username function.
+    Used in the register_option function.
     Register accounts for all roles.
     """
     # Inputting username & password
     username = input("Please write your username: ").strip()
-    while not isValidUsername(username):
+    while not is_valid_username(username):
         print("Incorrect username, please choose another one.")
         username = input(
             "Field should contain only English letters, digits, a single dot, underscore, or dash characters {3-20} in length.\n"
@@ -46,37 +46,37 @@ def registerAccount(userRole):
     password = input("Please write your password: ").strip()
 
     # Professor registration
-    if userRole == "P":
-        if username in Professor.profsAccounts.keys():
+    if user_role == "P":
+        if username in Professor.get_profs_usernames():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Professor.profsAccounts.update({f"{username}": f"{password}"})
+            Professor.update_profs_accounts(username, password)
             print(f"Welcome {username}!\n")
             main()
 
     # Student registration
-    elif userRole == "S":
-        if username in Student.stusAccounts.keys():
+    elif user_role == "S":
+        if username in Student.get_stus_usernames():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Student.stusAccounts.update({f"{username}": f"{password}"})
+            Student.update_stus_accounts(username, password)
             print(f"Welcome {username}!\n")
             main()
 
     # Teacher Assistant registration
-    elif userRole == "T":
-        if username in TeacherAssistant.TAsAccounts.keys():
+    elif user_role == "T":
+        if username in TeacherAssistant.get_tas_usernames():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            TeacherAssistant.TAsAccounts.update({f"{username}": f"{password}"})
+            TeacherAssistant.update_tas_accounts(username, password)
             print(f"Welcome {username}!\n")
             main()
 
 
-def registerOption():
+def register_option():
     option = input(
         "\nChoose your role to register:\n1. Professor\n2. Student\n3. Teacher Assistant\n4. Back\n"
     ).strip()
@@ -87,86 +87,86 @@ def registerOption():
 
     # Professor registration
     if option == "1":
-        registerAccount("P")
+        register_account("P")
 
     # Student registration
     if option == "2":
-        registerAccount("S")
+        register_account("S")
 
     # Teacher Assistant registration
     if option == "3":
-        registerAccount("T")
+        register_account("T")
 
     # Back to main menu
     if option == "4":
         main()
 
 
-def loginAccount(userRole, incorrectPasswordsLimit=3):
+def login_account(user_role, incorrect_passwords_limit=3):
     """
-    Uses the enterDetails function.
-    Used in the loginOption function.
+    Uses the enter_details function.
+    Used in the login_option function.
     Login accounts for all roles.
     """
     # 3 Invalid passwords attempts
-    if incorrectPasswordsLimit == 0:
-        sys.exit(1)
+    if incorrect_passwords_limit == 0:
+        sys.exit("Are you a hacker?!")
 
     # Input username & password without validation
-    username, password = enterDetails()
+    username, password = enter_details()
 
     # Professor login
-    if userRole == "P":
-        if username not in Professor.profsAccounts.keys():  # Unavailable username
+    if user_role == "P":
+        if username not in Professor.get_profs_usernames():  # Unavailable username
             print("This username does not exist.\n")
-            loginAccount("P")
+            login_account("P")
         else:
-            if password == Professor.profsAccounts.get(username):  # Correct password
-                profUser = Professor(username, password)
-                profUser.profMenu()
+            if password == Professor.get_prof_password(username):  # Correct password
+                prof_user = Professor(username, password)
+                prof_user.prof_menu()
                 main()
             else:  # Incorrect password
                 print(
-                    f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
+                    f"Incorrect password. {incorrect_passwords_limit - 1} tries left.\n"
                 )
-                loginAccount("P", incorrectPasswordsLimit - 1)
+                login_account("P", incorrect_passwords_limit - 1)
 
     # Student login
-    if userRole == "S":
-        if username not in Student.stusAccounts.keys():  # Unavailable username
+    if user_role == "S":
+        if username not in Student.get_stus_usernames():  # Unavailable username
             print("This username does not exist.\n")
-            loginAccount("S")
+            login_account("S")
         else:
-            if password == Student.stusAccounts.get(username):  # Correct password
-                stuUser = Student(username, password)
-                stuUser.stuMenu()
+            if password == Student.get_stu_password(username):  # Correct password
+                stu_user = Student(username, password)
+                stu_user.stu_menu()
                 main()
             else:  # Incorrect password
                 print(
-                    f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
+                    f"Incorrect password. {incorrect_passwords_limit - 1} tries left.\n"
                 )
-                loginAccount("S", incorrectPasswordsLimit - 1)
+                login_account("S", incorrect_passwords_limit - 1)
 
     # Teacher Assistant login
-    elif userRole == "T":
-        if username not in TeacherAssistant.TAsAccounts.keys():  # Unavailable username
+    elif user_role == "T":
+        if username not in TeacherAssistant.get_tas_usernames():  # Unavailable username
             print("This username does not exist.\n")
-            loginAccount("T")
+            login_account("T")
         else:
-            if password == TeacherAssistant.TAsAccounts.get(
+            if password == TeacherAssistant.get_ta_password(
                 username
             ):  # Correct password
-                TAUser = TeacherAssistant(username, password)
-                TAUser.TAMenu()
+                ta_user = TeacherAssistant(username, password)
+                ta_user.ta_menu()
                 main()
             else:  # Incorrect password
                 print(
-                    f"Incorrect password. {incorrectPasswordsLimit - 1} tries left.\n"
+                    f"Incorrect password. {incorrect_passwords_limit - 1} tries left.\n"
                 )
-                loginAccount("T", incorrectPasswordsLimit - 1)
+                login_account("T", incorrect_passwords_limit - 1)
 
 
-def loginOption():
+def login_option():
     option = input(
         "\nChoose your role to login:\n1. Professor\n2. Student\n3. Teacher Assistant\n4. Back\n"
     ).strip()
@@ -177,15 +177,15 @@ def loginOption():
 
     # Professor option
     if option == "1":
-        loginAccount("P")
+        login_account("P")
 
     # Student option
     elif option == "2":
-        loginAccount("S")
+        login_account("S")
 
     # Teacher Assistant option
     elif option == "3":
-        loginAccount("T")
+        login_account("T")
 
     # Back to main menu
     elif option == "4":
@@ -205,16 +205,17 @@ def main():
 
     # Login
     if option == "1":
-        loginOption()
+        login_option()
 
     # Register
     elif option == "2":
-        registerOption()
+        register_option()
 
     # Exit
     elif option == "3":
-        sys.exit(0)
+        sys.exit("Good bye!")
 
 
 # Starting point
-main()
+if __name__ == "__main__":
+    main()
