@@ -3,7 +3,8 @@ from home_work import HomeWork
 
 
 class Student:
-    stus_accounts = {"mya": "1"}  # {'username': 'password'}
+    # {'username': 'password'}
+    stus_accounts = {"mya": "1"}
 
     @classmethod
     def get_stus_usernames(cls):
@@ -23,6 +24,7 @@ class Student:
         self.__full_name = full_name
         self.__email = email
         self.__registered_courses = []
+
         # Fills __registered_courses[] from the registered_students{} from the Course class
         for course_name in Course.registered_students.keys():
             if self.__username in Course.registered_students.get(course_name):
@@ -34,7 +36,7 @@ class Student:
         to register from.
         """
         print("\nAvailable courses:")
-        for course_name in Course.get_all_courses:
+        for course_name in Course.get_all_courses():
             print(course_name)
 
         course_name = input(
@@ -45,8 +47,9 @@ class Student:
         if course_name == "B" or course_name == "b":
             self.stu_menu()
 
-        while (  # 1st condition: Unavailable course 2nd: Student already registered
-            course_name not in Course.courses_details.keys()
+        # 1st condition: Unavailable course 2nd: Student already registered
+        while (
+            course_name not in Course.get_all_courses()
             or course_name in self.__registered_courses
         ):
             course_name = input(
@@ -57,7 +60,7 @@ class Student:
 
         self.__registered_courses.append(course_name)
         Course.add_student(self.__username, course_name)
-        print("Course registered successfully!")
+        print("Course registered successfully!\n")
         self.stu_menu()
 
     def list_my_courses(self, from_menu=True):
@@ -73,8 +76,9 @@ class Student:
                 print(
                     f"{course_num}- {course_name} ({Course.get_course_code(course_name)})"
                 )
-
-        if from_menu:  # If the function call was from the students' menu
+        print("\n")
+        # If the function call was from the students' menu
+        if from_menu:
             self.stu_menu()
         return len(self.__registered_courses)
 
@@ -90,42 +94,57 @@ class Student:
         print(f"\n{course_name} ({course_code}) is taught by Prof.{course_prof}\n")
         print("Course assignments: ")
         for hw_num, grade in enumerate(
-            HomeWork.allStudentsGrades[self.__username][course_name], 1
+            HomeWork.get_student_course_grades(course_name, self.__username), 1
         ):
             print(f"HW #{hw_num} grade: {grade}/50")
 
-    def deleteCourse(self, courseNum):
+    def delete_course(self, course_num):
         """
-        Used in the viewACourse() function
+        Used in the view_course() function
         Deletes a student's course
         """
-        courseName = self.__registered_courses[int(courseNum) - 1]
-        for (
-            studentGrades
-        ) in Course.allStudentsGrades.values():  # Removes all course's HWs grades
-            if courseName in studentGrades:
-                del studentGrades[courseName]
+        course_name = self.__registered_courses[int(course_num) - 1]
 
-        Course.registered_students[courseName] = [
+        # Removes all course's HWs grades
+        for student_grades in HomeWork.all_students_grades.values():
+            if course_name in student_grades:
+                del student_grades[course_name]
+
+        # Removes the course from the Course class attribute
+        Course.registered_students[course_name] = [
             student
-            for student in Course.registered_students[courseName]
+            for student in Course.registered_students[course_name]
             if student != self.__username
-        ]  # Removes the course from the Course class attribute
+        ]
 
-        self.__registered_courses.remove(
-            courseName
-        )  # Removes the course from the instance attribute
+        # Removes the course from the instance attribute
+        self.__registered_courses.remove(course_name)
 
-    def submitSolution(self, courseNum):
+    def submit_solution(self, course_num):
         """
-        Used in the viewACourse() function
+        Used in the view_course() function
         Submits a student's course HW solution
         """
-        pass
+        course_name = self.__registered_courses[int(course_num) - 1]
+        hws_num = len(HomeWork.all_students_submissions[self.__username][course_name])
+        hw_number_input = input(
+            f"Enter the HW number you want to submit (1 to {hws_num}): "
+        )
 
-    # View a course (summary of course name, code, list HW report
-    # (Which HW did I submit ? , all grades, submit HW solution, unregister from
-    # course)
+        options_list = [str(x) for x in range(1, hws_num + 1)]
+        # Check if the input is a valid HW number
+        while hw_number_input not in options_list:
+            hw_number_input = input("Invalid HW number: ")
+
+        hw_solution_input = input("Enter your HW solution: ")
+
+        # Update the dictionary
+        HomeWork.all_students_submissions["mya"][course_name][
+            int(hw_number_input) - 1
+        ] = hw_solution_input
+        print("Submission successful!")
+        self.stu_menu()
+
     def view_course(self):
         """
         View a summary of the course (name, code, professor, HWs)
@@ -133,17 +152,17 @@ class Student:
         View HWs grades
         Submit a solution
         """
-        coursesNum = self.list_my_courses(False)
-        if coursesNum == 0:
+        courses_num = self.list_my_courses(False)
+        if courses_num == 0:
             print("You are not registered in any course")
             self.stu_menu()
         else:
-            courseNum = input("Which ith course to view? ")
-            optionsList = [str(x) for x in range(1, coursesNum + 1)]
-            while courseNum not in optionsList:
-                courseNum = input("Wrong input ")
+            course_num = input("Which ith course to view? ")
+            options_list = [str(x) for x in range(1, courses_num + 1)]
+            while course_num not in options_list:
+                course_num = input("Wrong input: ")
 
-            self.view_course_details(courseNum)
+            self.view_course_details(course_num)
 
             option = input(
                 "\nPlease make a choice: \n1- Unregister from the course\n2- Submit a HW\n3- Back\n"
@@ -153,28 +172,30 @@ class Student:
 
             # Delete a course
             if option == "1":
-                self.deleteCourse(courseNum)
+                self.delete_course(course_num)
                 self.stu_menu()
 
             # Submit a solution
             elif option == "2":
-                self.submitSolution(courseNum)
+                self.submit_solution(course_num)
 
             # Go back
             elif option == "3":
                 self.stu_menu()
 
-    # Grades report(List of courses with # of HWs of each course and the total
-    # grades, E.g. Course code CS333 - Total 4 HWs - Grade 101 / 200)
     def print_grade_report(self):
-        for course, grades in HomeWork.allStudentsGrades.get(
-            self.__username, {}
-        ).items():
-            numOfHWs = len(grades)
-            totalGrade = sum(int(grade) for grade in grades if grade.isdigit())
+        """
+        Grades report (List of courses with # of HWs of each course and the total)
+        grades, E.g. Course code CS333 - Total 4 HWs - Grade 101 / 200)
+        """
+        for course, grades in HomeWork.all_students_grades.get(self.__username).items():
+            hws_num = len(grades)
+            total_grade = sum(int(grade) for grade in grades if grade.isdigit())
             print(
-                f"{course} has {numOfHWs} assignments - Total Grade: {totalGrade}/{numOfHWs * 50}"
+                f"{course} has {hws_num} assignments - Total Grade: {total_grade}/{hws_num * 50}"
             )
+
+        self.stu_menu()
 
     def stu_menu(self):
         # Student menu
@@ -207,7 +228,3 @@ class Student:
         # Back to main menu
         elif option == "5":
             del self
-
-
-
-# line 92

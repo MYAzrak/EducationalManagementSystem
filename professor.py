@@ -19,7 +19,7 @@ class Professor:
         self.__full_name = full_name
         self.__email = email
 
-    def create_course(self, course_name, TAs):
+    def create_course(self, course_name, tas):
         pass
 
     def show_course_stats(self, hw_name):
