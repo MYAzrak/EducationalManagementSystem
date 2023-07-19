@@ -4,9 +4,11 @@ class TeacherAssistant:
     @classmethod
     def get_tas_usernames(cls):
         return cls.tas_accounts.keys()
+
     @classmethod
     def get_ta_password(cls, username):
         return cls.tas_accounts.get(username)
+
     @classmethod
     def update_tas_accounts(cls, username, password):
         cls.tas_accounts.update({username: password})
