@@ -12,8 +12,26 @@ class HomeWork:
     all_students_submissions = {"mya": {"Prog": ["NA", "This is my solution"]}}
 
     @classmethod
-    def get_student_course_grades(cls, course_name, username):
-        return cls.all_students_grades[username][course_name]
+    def get_student_course_grades(cls, course_name: str, student_name: str):
+        return cls.all_students_grades[student_name][course_name]
+
+    @classmethod
+    def set_student_hw_grade(
+        cls, course_name: str, hw_name: str, student_name: str, hw_grade: str
+    ):
+        """
+        Sets a grade for a hw in a course for a student
+        """
+        hw_num = cls.all_hws[course_name].index(hw_name)
+        cls.all_students_grades[student_name][course_name][hw_num] = hw_grade
+
+    @classmethod
+    def get_student_hw_solution(cls, course_name: str, hw_name: str, student_name: str):
+        """
+        Returns a student's solution of a course hw
+        """
+        hw_num = cls.all_hws[course_name].index(hw_name)
+        return cls.all_students_submissions[student_name][course_name][hw_num]
 
     def __init__(self, course_name, hw_name):
         self.__course_name = course_name  # Which course does it belong to

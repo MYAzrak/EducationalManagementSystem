@@ -1,24 +1,35 @@
+# Modules imported
 from course import Course
 from home_work import HomeWork
 
 
+# Class definition
 class Student:
     # {'username': 'password'}
     stus_accounts = {"mya": "1"}
 
     @classmethod
-    def get_stus_usernames(cls):
+    def get_stus_usernames(cls) -> dict:
+        """
+        Returns all students' usernames
+        """
         return cls.stus_accounts.keys()
 
     @classmethod
-    def get_stu_password(cls, username):
-        return cls.stus_accounts.get(username)
+    def get_stu_password(cls, student_name: str) -> str:
+        """
+        Returns the password of a specific students username
+        """
+        return cls.stus_accounts.get(student_name)
 
     @classmethod
-    def update_stus_accounts(cls, username, password):
-        cls.stus_accounts.update({username: password})
+    def register_student(cls, student_name: str, password: str):
+        """
+        Updates stus_accounts{} and adds a new username
+        """
+        cls.stus_accounts.update({student_name: password})
 
-    def __init__(self, username, password, full_name="None", email="None"):
+    def __init__(self, username:str, password:str, full_name="None", email="None"):
         self.__username = username
         self.__password = password
         self.__full_name = full_name

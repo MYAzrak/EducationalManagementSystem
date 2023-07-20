@@ -74,11 +74,15 @@ class Professor:
 
     def list_hws(self, course_name: str):
         """
-        Used in the show_course_details function
+        Used in the show_course_details and view_hw functions
         Lists the hws of a single course for a professor
         """
-        for hw_num, hw in enumerate(HomeWork.all_hws[course_name], 1):
-            print(f"{hw_num}- {hw}")
+        if HomeWork.all_hws[course_name] == []:
+            print("This course does not have any homeworks\n")
+            self.show_course_details()
+        else:
+            for hw_num, hw in enumerate(HomeWork.all_hws[course_name], 1):
+                print(f"{hw_num}- {hw}")
 
     def create_hw(self, course_name: str):
         hw_name = input("\nWhat would you like to name the assignment? ").strip()
@@ -90,26 +94,90 @@ class Professor:
 
         # Updates the all_students_grades dictionary
         for student in HomeWork.all_students_grades.keys():
-            for course in student.keys():
+            for course in HomeWork.all_students_grades[student].keys():
                 if course == course_name:
                     HomeWork.all_students_grades[student][course].append("NA")
 
         # Updates the all_students_submissions dictionary
         for student in HomeWork.all_students_submissions.keys():
-            for course in student.keys():
+            for course in HomeWork.all_students_grades[student].keys():
                 if course == course_name:
                     HomeWork.all_students_submissions[student][course].append("NA")
 
         print("Homework created successfully!")
 
+    def view_solution(self, course_name: str, hw_name: str):
+        """
+        Used in the view_hw function
+        View a student's solution for a hw
+        """
+        has_students = Course.print_all_students(course_name)
+
+        # If the course does not have any students
+        if not has_students:
+            self.view_hw()
+
+        student_name = input(
+            "Which student do you want to view their solution? "
+        ).strip()
+        while student_name not in Course.registered_students[course_name]:
+            student_name = input("This students does not exist: ").strip()
+
+        hw_solution = HomeWork.get_student_hw_solution(
+            course_name, hw_name, student_name
+        )
+        print(hw_solution)
+        self.view_hw(course_name)
+
+    def set_grade(self, course_name: str, hw_name: str):
+        """
+        Used in the view_hw function
+        Set a student's grade for a hw
+        """
+        has_students = Course.print_all_students(course_name)
+
+        # If the course does not have any students
+        if not has_students:
+            self.view_hw()
+
+        student_name = input("Which student to set their grade? ").strip()
+        while student_name not in Course.registered_students[course_name]:
+            student_name = input("This students does not exist: ").strip()
+
+        hw_grade = input("Input the grade: ").strip()
+        HomeWork.set_student_hw_grade(course_name, hw_name, student_name, hw_grade)
+
+        print(f"Grade changed successfully!\n")
+        self.view_hw(course_name)
+
     def view_hw(self, course_name):
-        pass
+        """
+        Used in the show_course_details function
+        Shows info about professors' homeworks
+        View a solution, set a grade
+        """
+        self.list_hws(course_name)
+        hw_name = input("Which assignment would you like to view? ").strip()
+        while hw_name not in HomeWork.all_hws[course_name]:
+            hw_name = input("Homework not found: ").strip()
+
+        option = input(
+            "Choose your option\n1- View a solution\n2- Set a grade\n3- Back\n"
+        ).strip()
+        while option not in ["1", "2", "3"]:
+            option = input("Wrong input: ").strip()
+
+        if option == "1":
+            self.view_solution(course_name, hw_name)
+
+        elif option == "2":
+            self.set_grade(course_name, hw_name)
+
+        elif option == "3":
+            self.show_course_details()
 
     def show_course_details(self):
-        """
-        View HW (Show info, show grades report, list solutions, view solution (show info, set grade, set a comment, go back), Go back (== log out) ), Go back (== log out) )
-        """
-        print("Your list of courses:")
+        print("\nYour list of courses:")
         self.list_my_courses(False)
 
         course_name = input("Which course do you want to view? ").strip()
@@ -125,15 +193,15 @@ class Professor:
 
         if option == "1":
             self.list_hws(course_name)
-            self.prof_menu()
+            self.show_course_details()
 
         elif option == "2":
             self.create_hw(course_name)
-            self.prof_menu()
+            self.show_course_details()
 
         elif option == "3":
             self.view_hw(course_name)
-            self.prof_menu()
+            self.show_course_details()
 
         elif option == "4":
             self.prof_menu()

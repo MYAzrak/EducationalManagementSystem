@@ -21,7 +21,7 @@ def enter_details():
         return username, password
 
 
-def is_valid_username(username):
+def is_valid_username(username: str):
     """
     Used in the register_account function.
     Validates usernames to have English letters, digits, a single dot, underscore, or dash characters only.
@@ -30,7 +30,7 @@ def is_valid_username(username):
     return re.match(pattern, username) is not None
 
 
-def register_account(user_role):
+def register_account(user_role: str):
     """
     Uses the is_valid_username function.
     Used in the register_option function.
@@ -61,7 +61,7 @@ def register_account(user_role):
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Student.update_stus_accounts(username, password)
+            Student.register_student(username, password)
             print(f"Welcome {username}!\n")
             main()
 
@@ -102,7 +102,7 @@ def register_option():
         main()
 
 
-def login_account(user_role, incorrect_passwords_limit=3):
+def login_account(user_role: str, incorrect_passwords_limit=3):
     """
     Uses the enter_details function.
     Used in the login_option function.

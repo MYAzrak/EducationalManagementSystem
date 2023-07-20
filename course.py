@@ -1,9 +1,9 @@
 class Course:
     # {'Course name' : ['Course professor', 'Course code']}
     courses_details = {
-        "Prog": ["Ali", "123"],
+        "Prog": ["ali", "123"],
         "Prog2": ["Yaser", "321"],
-        "MTH": ["Ali", "789"],
+        "MTH": ["ali", "789"],
     }
 
     # {'Course name' : ['TA1', 'TA2', ...]}
@@ -42,6 +42,20 @@ class Course:
         cls.courses_details[course_name] = [prof_name, course_code]
         cls.courses_tas[course_name] = tas
         cls.registered_students[course_name] = []
+
+    @classmethod
+    def print_all_students(cls, course_name) -> bool:
+        '''
+        Prints all students for a specific course
+        Return false if the course does not have any registered students
+        '''
+        if cls.registered_students[course_name] == []:
+            print("This course does not have any registered students")
+            return False
+        else:
+            for student in cls.registered_students[course_name]:
+                print(f"1- {student}")
+                return True
 
     def __init__(self, name, code):
         self.__name = name
