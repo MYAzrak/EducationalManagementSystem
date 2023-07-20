@@ -35,12 +35,13 @@ class Course:
         """
         Adds a student to a specific course
         """
-        cls.registered_students[course_name].extend([stu_name])
+        cls.registered_students[course_name].append(stu_name)
 
     @classmethod
     def create_course(cls, prof_name, course_name, course_code, tas):
         cls.courses_details[course_name] = [prof_name, course_code]
         cls.courses_tas[course_name] = tas
+        cls.registered_students[course_name] = []
 
     def __init__(self, name, code):
         self.__name = name

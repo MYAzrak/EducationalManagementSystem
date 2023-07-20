@@ -1,5 +1,5 @@
 class HomeWork:
-    # {'Course name' : ['HW numbers']}
+    # {'Course name' : ['HW names']}
     all_hws = {
         "Prog": ["HW1", "HW2"],
         "Prog2": [],
@@ -9,7 +9,7 @@ class HomeWork:
     all_students_grades = {"mya": {"Prog": ["24", "NA"]}}
 
     # {'student name' : {'course name' : ['HW1 solution' 'HW2 solution' ...] }}
-    all_students_submissions = {"mya": {"Prog": ["None", "This is my solution"]}}
+    all_students_submissions = {"mya": {"Prog": ["NA", "This is my solution"]}}
 
     @classmethod
     def get_student_course_grades(cls, course_name, username):

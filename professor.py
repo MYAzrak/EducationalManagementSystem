@@ -1,10 +1,11 @@
 from course import Course
+from home_work import HomeWork
 from teacher_assistant import TeacherAssistant
 
 
 class Professor:
     # {'username': password}
-    profs_accounts = {"Ali": "123"}
+    profs_accounts = {"ali": "1"}
 
     @classmethod
     def get_profs_usernames(cls):
@@ -30,13 +31,19 @@ class Professor:
             if self.__username in Course.courses_details.get(course_name):
                 self.__created_courses.append(course_name)
 
-    def list_my_courses(self):
+    def list_my_courses(self, from_menu=True):
         """
         Lists the courses created by the professor
         """
+        if self.__created_courses == []:
+            print("You do not have any course\n")
+            self.prof_menu()
+
         for course_name in self.__created_courses:
             print(f"- {course_name} ({Course.get_course_code(course_name)})")
-        self.prof_menu()
+
+        if from_menu:
+            self.prof_menu()
 
     def create_course(self):
         course_name = input("What would you like to name your course? ").strip()
@@ -65,25 +72,71 @@ class Professor:
         print("Course created successfully!\n")
         self.prof_menu()
 
-    def show_course_details(self, hw_name):
+    def list_hws(self, course_name: str):
         """
-        View Courses(List HW, Create HW, View HW(Show info, show grades report,
-        list solutions, view solution (show info, set grade, set a comment, go back),
-        Go back (== log out) ), Go back (== log out) )
+        Used in the show_course_details function
+        Lists the hws of a single course for a professor
         """
+        for hw_num, hw in enumerate(HomeWork.all_hws[course_name], 1):
+            print(f"{hw_num}- {hw}")
+
+    def create_hw(self, course_name: str):
+        hw_name = input("\nWhat would you like to name the assignment? ").strip()
+        while hw_name in HomeWork.all_hws[course_name]:
+            hw_name = input("\nYou already have this assignment: ").strip()
+
+        # Updates the all_hws dictionary
+        HomeWork.all_hws[course_name].append(hw_name)
+
+        # Updates the all_students_grades dictionary
+        for student in HomeWork.all_students_grades.keys():
+            for course in student.keys():
+                if course == course_name:
+                    HomeWork.all_students_grades[student][course].append("NA")
+
+        # Updates the all_students_submissions dictionary
+        for student in HomeWork.all_students_submissions.keys():
+            for course in student.keys():
+                if course == course_name:
+                    HomeWork.all_students_submissions[student][course].append("NA")
+
+        print("Homework created successfully!")
+
+    def view_hw(self, course_name):
         pass
 
-    def create_hw(self, hw_name):
-        pass
+    def show_course_details(self):
+        """
+        View HW (Show info, show grades report, list solutions, view solution (show info, set grade, set a comment, go back), Go back (== log out) ), Go back (== log out) )
+        """
+        print("Your list of courses:")
+        self.list_my_courses(False)
 
-    def view_hw(self, hw_name):
-        pass
+        course_name = input("Which course do you want to view? ").strip()
+        while course_name not in self.__created_courses:
+            course_name = input("You do not have such course: ").strip()
 
-    def grade_hw(self, hw_name):
-        pass
+        option = input(
+            "\nChoose an option:\n1- List HWs\n2- Create a HW\n3- View a HW\n4- Back\n"
+        )
 
-    def show_hw_stats(self, hw_name):
-        pass
+        while option not in ["1", "2", "3", "4"]:
+            option = input("Wrong input: ")
+
+        if option == "1":
+            self.list_hws(course_name)
+            self.prof_menu()
+
+        elif option == "2":
+            self.create_hw(course_name)
+            self.prof_menu()
+
+        elif option == "3":
+            self.view_hw(course_name)
+            self.prof_menu()
+
+        elif option == "4":
+            self.prof_menu()
 
     def prof_menu(self):
         # Professor menu
