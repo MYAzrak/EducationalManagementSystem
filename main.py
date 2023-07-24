@@ -1,5 +1,4 @@
 # Modules imported
-import sys
 import re
 from professor import Professor
 from student import Student
@@ -116,7 +115,7 @@ def login_account(user_role: str, incorrect_passwords_limit=3):
     """
     # 3 Invalid passwords attempts
     if incorrect_passwords_limit == 0:
-        sys.exit("Are you a hacker?!")
+        raise SystemExit("Are you a hacker?!")
 
     # Input username & password without validation
     username, password = enter_details()
@@ -222,9 +221,24 @@ def main():
 
     # Exit
     elif option == "3":
-        sys.exit("Good bye!")
+        pass
 
 
 # Starting point
 if __name__ == "__main__":
+    # Load last session's data
+    option = input("Do you want to load last session's data? (Y/N)\n").strip()
+    if option == "Y" or option == "y":
+        print("Loading...")
+        Student.load_json_files()
+
     main()
+
+    # Save this session's data
+    option = input("Do you want to save this session's data? (Y/N)\n").strip()
+    if option == "Y" or option == "y":
+        option = input(
+            "NOTE: Last sessions' data will be lost! Are you sure? (Y/N)\n"
+        ).strip()
+    if option == "Y" or option == "y":
+        print("Saving...")

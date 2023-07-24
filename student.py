@@ -1,4 +1,6 @@
 # Modules imported
+import json
+import os
 from course import Course
 from home_work import HomeWork
 
@@ -6,7 +8,7 @@ from home_work import HomeWork
 # Class definition
 class Student:
     # {'username': 'password'}
-    stus_accounts = {"mya": "1"}
+    stus_accounts = {}
 
     @classmethod
     def get_stus_usernames(cls) -> dict:
@@ -28,6 +30,19 @@ class Student:
         Updates stus_accounts{} and adds a new username
         """
         cls.stus_accounts.update({student_name: password})
+
+    @classmethod
+    def load_json_files(cls):
+        """
+        Loads the data of stus_accounts{} from the json file
+        """
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(
+            current_directory, "LastSessionData\stus_accounts.json"
+        )
+
+        with open(file_path, "r") as f:
+            cls.stus_accounts = json.load(f)
 
     def __init__(self, username: str, password: str, full_name="None", email="None"):
         self.__username = username

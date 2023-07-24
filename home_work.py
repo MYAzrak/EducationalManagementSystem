@@ -1,3 +1,7 @@
+# Modules imported
+import json
+
+
 # Class definition
 class HomeWork:
     # {'Course name' : ['HW names']}

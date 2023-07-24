@@ -1,4 +1,5 @@
 # Modules imported
+import json
 from course import Course
 
 
@@ -53,7 +54,7 @@ class TeacherAssistant:
 
         # Wrong Input
         while option not in ["1", "2"]:
-            option = input("Wrong input\n")
+            option = input("Wrong input\n").strip()
 
         # View courses
         if option == "1":
