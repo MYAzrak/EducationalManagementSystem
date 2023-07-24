@@ -1,5 +1,6 @@
 # Modules imported
 import json
+import os
 from course import Course
 from home_work import HomeWork
 from teacher_assistant import TeacherAssistant
@@ -8,7 +9,7 @@ from teacher_assistant import TeacherAssistant
 # Class definition
 class Professor:
     # {'username': 'password'}
-    profs_accounts = {"ali": "1"}
+    profs_accounts = {}
 
     @classmethod
     def get_profs_usernames(cls) -> dict:
@@ -21,6 +22,30 @@ class Professor:
     @classmethod
     def register_prof(cls, username: str, password: str):
         cls.profs_accounts.update({username: password})
+
+    @classmethod
+    def save_json_files(cls):
+        """
+        Saves the data of profs_accounts{} to the json file
+        """
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(
+            current_directory, r"LastSessionData\profs_accounts.json"
+        )
+        with open(file_path, "w") as f:
+            json.dump(cls.profs_accounts, f)
+
+    @classmethod
+    def load_json_files(cls):
+        """
+        Loads the data of profs_accounts{} from the json file
+        """
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(
+            current_directory, r"LastSessionData\profs_accounts.json"
+        )
+        with open(file_path, "r") as f:
+            cls.profs_accounts = json.load(f)
 
     def __init__(self, username: str, password: str, full_name="None", email="None"):
         self.__username = username
@@ -141,7 +166,7 @@ class Professor:
 
         # If the course does not have any students
         if not has_students:
-            self.view_hw()
+            self.prof_menu()
 
         student_name = input("Which student to set their grade? ").strip()
         while student_name not in Course.registered_students[course_name]:

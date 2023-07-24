@@ -3,6 +3,8 @@ import re
 from professor import Professor
 from student import Student
 from teacher_assistant import TeacherAssistant
+from course import Course
+from home_work import HomeWork
 
 
 # Functions defined
@@ -200,6 +202,28 @@ def login_option():
         main()
 
 
+def load_json():
+    """
+    Used in the starting point
+    """
+    Student.load_json_files()
+    Professor.load_json_files()
+    TeacherAssistant.load_json_files()
+    Course.load_json_files()
+    HomeWork.load_json_files()
+
+
+def save_json():
+    """
+    Used in the starting point
+    """
+    Student.save_json_files()
+    Professor.save_json_files()
+    TeacherAssistant.save_json_files()
+    Course.save_json_files()
+    HomeWork.save_json_files()
+
+
 # Main login menu
 def main():
     # Register/Login options
@@ -230,7 +254,7 @@ if __name__ == "__main__":
     option = input("Do you want to load last session's data? (Y/N)\n").strip()
     if option == "Y" or option == "y":
         print("Loading...")
-        Student.load_json_files()
+        load_json()
 
     main()
 
@@ -240,5 +264,6 @@ if __name__ == "__main__":
         option = input(
             "NOTE: Last sessions' data will be lost! Are you sure? (Y/N)\n"
         ).strip()
-    if option == "Y" or option == "y":
-        print("Saving...")
+        if option == "Y" or option == "y":
+            print("Saving...")
+            save_json()

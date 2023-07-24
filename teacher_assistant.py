@@ -1,11 +1,12 @@
 # Modules imported
 import json
+import os
 from course import Course
 
 
 # Class definition
 class TeacherAssistant:
-    tas_accounts = {"Mohammad": "1"}  # {'username': 'password'}
+    tas_accounts = {}  # {'username': 'password'}
 
     @classmethod
     def get_tas_usernames(cls) -> dict:
@@ -18,6 +19,30 @@ class TeacherAssistant:
     @classmethod
     def register_ta(cls, username: str, password: str):
         cls.tas_accounts.update({username: password})
+
+    @classmethod
+    def save_json_files(cls):
+        """
+        Saves the data of tas_accounts{} to the json file
+        """
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(
+            current_directory, r"LastSessionData\tas_accounts.json"
+        )
+        with open(file_path, "w") as f:
+            json.dump(cls.tas_accounts, f)
+
+    @classmethod
+    def load_json_files(cls):
+        """
+        Loads the data of tas_accounts{} from the json file
+        """
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(
+            current_directory, r"LastSessionData\tas_accounts.json"
+        )
+        with open(file_path, "r") as f:
+            cls.tas_accounts = json.load(f)
 
     def __init__(self, username: str, password: str, fullName="None", email="None"):
         self.__username = username
