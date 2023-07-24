@@ -272,3 +272,4 @@ class Student:
         # Back to main menu
         elif option == "5":
             del self
+            return

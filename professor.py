@@ -276,3 +276,4 @@ class Professor:
         # Back to main menu
         elif option == "4":
             del self
+            return

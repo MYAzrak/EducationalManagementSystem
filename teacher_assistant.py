@@ -89,3 +89,4 @@ class TeacherAssistant:
         # Back to main menu
         elif option == "2":
             del self
+            return
