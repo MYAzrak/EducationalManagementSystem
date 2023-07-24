@@ -23,13 +23,13 @@ class Student:
         return cls.stus_accounts.get(student_name)
 
     @classmethod
-    def register_student(cls, student_name: str, password: str):
+    def register_stu(cls, student_name: str, password: str):
         """
         Updates stus_accounts{} and adds a new username
         """
         cls.stus_accounts.update({student_name: password})
 
-    def __init__(self, username:str, password:str, full_name="None", email="None"):
+    def __init__(self, username: str, password: str, full_name="None", email="None"):
         self.__username = username
         self.__password = password
         self.__full_name = full_name
@@ -47,7 +47,7 @@ class Student:
         to register from.
         """
         print("\nAvailable courses:")
-        for course_name in Course.get_all_courses():
+        for course_name in Course.get_all_avail_courses():
             print(course_name)
 
         course_name = input(
@@ -60,7 +60,7 @@ class Student:
 
         # 1st condition: Unavailable course 2nd: Student already registered
         while (
-            course_name not in Course.get_all_courses()
+            course_name not in Course.get_all_avail_courses()
             or course_name in self.__registered_courses
         ):
             course_name = input(
@@ -69,15 +69,17 @@ class Student:
             if course_name == "B" or course_name == "b":
                 self.stu_menu()
 
+        # Adds the course to the __registered_courses[], registered_students{}, all_students_grades{} and all_students_submissions{}
         self.__registered_courses.append(course_name)
-        Course.add_student(self.__username, course_name)
+        Course.add_student_to_course(self.__username, course_name)
         print("Course registered successfully!\n")
         self.stu_menu()
 
-    def list_my_courses(self, from_menu=True):
+    def list_my_courses(self, from_menu=True) -> int:
         """
         Lists student's courses with their codes
         Used in the view_course() function
+        Returns the number of courses that the student is registered to
         """
         if len(self.__registered_courses) == 0:
             print("You are not registered in any course")
@@ -88,12 +90,13 @@ class Student:
                     f"{course_num}- {course_name} ({Course.get_course_code(course_name)})"
                 )
         print("\n")
+
         # If the function call was from the students' menu
         if from_menu:
             self.stu_menu()
         return len(self.__registered_courses)
 
-    def view_course_details(self, course_num):
+    def view_course_details(self, course_num: int):
         """
         Used in the view_course() function
         List a course details such as, course name and code and taught by whom,
@@ -109,17 +112,18 @@ class Student:
         ):
             print(f"HW #{hw_num} grade: {grade}/50")
 
-    def delete_course(self, course_num):
+    def unregister_from_course(self, course_num: int):
         """
         Used in the view_course() function
-        Deletes a student's course
+        Deletes a student from a course
         """
         course_name = self.__registered_courses[int(course_num) - 1]
 
         # Removes all course's HWs grades
-        for student_grades in HomeWork.all_students_grades.values():
-            if course_name in student_grades:
-                del student_grades[course_name]
+        del HomeWork.all_students_grades[self.__username][course_name]
+
+        # Remove all course's HWs submissions
+        del HomeWork.all_students_submissions[self.__username][course_name]
 
         # Removes the course from the Course class attribute
         Course.registered_students[course_name] = [
@@ -130,8 +134,9 @@ class Student:
 
         # Removes the course from the instance attribute
         self.__registered_courses.remove(course_name)
+        print(f"You are no longer registered to {course_name}")
 
-    def submit_solution(self, course_num):
+    def submit_solution(self, course_num: int):
         """
         Used in the view_course() function
         Submits a student's course HW solution
@@ -149,11 +154,11 @@ class Student:
 
         hw_solution_input = input("Enter your HW solution: ")
 
-        # Update the dictionary
-        HomeWork.all_students_submissions["mya"][course_name][
+        # Update all_students_submissions{}
+        HomeWork.all_students_submissions[self.__username][course_name][
             int(hw_number_input) - 1
         ] = hw_solution_input
-        print("Submission successful!")
+        print("Submitted successfully!")
         self.stu_menu()
 
     def view_course(self):
@@ -181,9 +186,9 @@ class Student:
             while option not in ["1", "2", "3"]:
                 option = input("Wrong input ")
 
-            # Delete a course
+            # Unregister from a course
             if option == "1":
-                self.delete_course(course_num)
+                self.unregister_from_course(course_num)
                 self.stu_menu()
 
             # Submit a solution

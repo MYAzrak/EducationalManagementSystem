@@ -47,36 +47,42 @@ def register_account(user_role: str):
 
     # Professor registration
     if user_role == "P":
+        # If username already exists
         if username in Professor.get_profs_usernames():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Professor.update_profs_accounts(username, password)
+            Professor.register_prof(username, password)
             print(f"Welcome {username}!\n")
             main()
 
     # Student registration
     elif user_role == "S":
+        # If username already exists
         if username in Student.get_stus_usernames():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            Student.register_student(username, password)
+            Student.register_stu(username, password)
             print(f"Welcome {username}!\n")
             main()
 
     # Teacher Assistant registration
     elif user_role == "T":
+        # If username already exists
         if username in TeacherAssistant.get_tas_usernames():
             print("This username already exists. Going back to the login menu\n")
             main()
         else:
-            TeacherAssistant.update_tas_accounts(username, password)
+            TeacherAssistant.register_ta(username, password)
             print(f"Welcome {username}!\n")
             main()
 
 
 def register_option():
+    """
+    Uses the register_account function
+    """
     option = input(
         "\nChoose your role to register:\n1. Professor\n2. Student\n3. Teacher Assistant\n4. Back\n"
     ).strip()
@@ -167,6 +173,9 @@ def login_account(user_role: str, incorrect_passwords_limit=3):
 
 
 def login_option():
+    """
+    Uses the login_account function
+    """
     option = input(
         "\nChoose your role to login:\n1. Professor\n2. Student\n3. Teacher Assistant\n4. Back\n"
     ).strip()

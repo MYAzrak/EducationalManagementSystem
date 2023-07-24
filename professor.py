@@ -1,25 +1,27 @@
+# Modules imported
 from course import Course
 from home_work import HomeWork
 from teacher_assistant import TeacherAssistant
 
 
+# Class definition
 class Professor:
-    # {'username': password}
+    # {'username': 'password'}
     profs_accounts = {"ali": "1"}
 
     @classmethod
-    def get_profs_usernames(cls):
+    def get_profs_usernames(cls) -> dict:
         return cls.profs_accounts.keys()
 
     @classmethod
-    def get_prof_password(cls, username):
+    def get_prof_password(cls, username: str) -> str:
         return cls.profs_accounts.get(username)
 
     @classmethod
-    def update_profs_accounts(cls, username, password):
+    def register_prof(cls, username: str, password: str):
         cls.profs_accounts.update({username: password})
 
-    def __init__(self, username, password, full_name="None", email="None"):
+    def __init__(self, username: str, password: str, full_name="None", email="None"):
         self.__username = username
         self.__password = password
         self.__full_name = full_name
@@ -47,7 +49,7 @@ class Professor:
 
     def create_course(self):
         course_name = input("What would you like to name your course? ").strip()
-        while course_name in Course.get_all_courses():
+        while course_name in Course.get_all_avail_courses():
             course_name = input(
                 "This course exists already. Please choose another name: ('B' to go back) "
             ).strip()
@@ -89,16 +91,16 @@ class Professor:
         while hw_name in HomeWork.all_hws[course_name]:
             hw_name = input("\nYou already have this assignment: ").strip()
 
-        # Updates the all_hws dictionary
+        # Updates the all_hws{}
         HomeWork.all_hws[course_name].append(hw_name)
 
-        # Updates the all_students_grades dictionary
+        # Updates the all_students_grades{}
         for student in HomeWork.all_students_grades.keys():
             for course in HomeWork.all_students_grades[student].keys():
                 if course == course_name:
                     HomeWork.all_students_grades[student][course].append("NA")
 
-        # Updates the all_students_submissions dictionary
+        # Updates the all_students_submissions{}
         for student in HomeWork.all_students_submissions.keys():
             for course in HomeWork.all_students_grades[student].keys():
                 if course == course_name:
@@ -150,7 +152,10 @@ class Professor:
         print(f"Grade changed successfully!\n")
         self.view_hw(course_name)
 
-    def view_hw(self, course_name):
+    def view_hw(
+        self,
+        course_name: str,
+    ):
         """
         Used in the show_course_details function
         Shows info about professors' homeworks
@@ -164,19 +169,27 @@ class Professor:
         option = input(
             "Choose your option\n1- View a solution\n2- Set a grade\n3- Back\n"
         ).strip()
+
+        # Wrong input
         while option not in ["1", "2", "3"]:
             option = input("Wrong input: ").strip()
 
+        # View a solution
         if option == "1":
             self.view_solution(course_name, hw_name)
 
+        # Set a grade
         elif option == "2":
             self.set_grade(course_name, hw_name)
 
+        # Back
         elif option == "3":
             self.show_course_details()
 
     def show_course_details(self):
+        """
+        Used in the prof_menu()
+        """
         print("\nYour list of courses:")
         self.list_my_courses(False)
 
@@ -191,18 +204,22 @@ class Professor:
         while option not in ["1", "2", "3", "4"]:
             option = input("Wrong input: ")
 
+        # List HWs
         if option == "1":
             self.list_hws(course_name)
             self.show_course_details()
 
+        # Create a HW
         elif option == "2":
             self.create_hw(course_name)
             self.show_course_details()
 
+        # View a HW
         elif option == "3":
             self.view_hw(course_name)
             self.show_course_details()
 
+        # Back
         elif option == "4":
             self.prof_menu()
 
