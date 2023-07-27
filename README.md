@@ -1,5 +1,5 @@
 # Educational Management System
-A console applicaton that acts as a simplified version of BlackBoard. It allows interactions between professors, students, and teacher assistants (ex. creating/joining courses, creating/solving/grading homeworks, etc.).
+A console application that acts as a simplified version of BlackBoard. It allows interactions between professors, students, and teacher assistants (ex. creating/joining courses, creating/solving/grading homeworks, etc.).
 
 ## Prerequisites
 - Python 3.x
